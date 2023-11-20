@@ -1,0 +1,57 @@
+name: "Setup Deno with cache"
+
+description: "Composite action wrapper around denoland/setup-deno and actions/cache to setup Deno and cache its dependencies."
+
+inputs:
+  deno-version:
+    description: "The Deno version to install. Can be a semver version of a stable release, 'canary' for the latest canary, or the Git hash of a specific canary release."
+    default: "1.x"
+  deno-json-path:
+    description: "The path to the Deno config file to use for caching. Defaults to an empty string, using the built-in CLI default."
+    default: ""
+  deno-lock-path:
+    description: "The path to the lock file to use for caching. Defaults to `./deno.lock`."
+    default: "./deno.lock"
+  scripts-dir:
+    description: "The path to the scripts to cache. Defaults to the repo root (`.`)."
+    default: "."
+
+outputs:
+  deno-version:
+    description: "The Deno version that was installed."
+    value: ${{ steps.setup-deno.outputs.deno-version }}
+  is-canary:
+    description: "If the installed Deno version was a canary version."
+    value: ${{ steps.setup-deno.outputs.is-canary }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Deno
+      id: setup-deno
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: ${{ inputs.deno-version }}
+      
+    - name: Set Deno cache dir
+      shell: bash
+      run: echo "DENO_DIR=${{ runner.os == 'Windows' && 'C:\\deno_cache' || '/tmp/deno_cache' }}" >> $GITHUB_ENV
+
+    - name: Cache Deno dependencies
+      uses: actions/cache@v3
+      with:
+        key: ${{ hashFiles(inputs.deno-lock-path) }}
+        path: ${{ env.DENO_DIR }}
+
+    - name: Install GNU findutils
+      if: runner.os == 'macOS'
+      shell: bash
+      run: brew install findutils
+
+    - name: Restore Deno dependencies
+      shell: bash
+      run: |
+        export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+        find ${{ inputs.scripts-path }} \
+          -regex '.+\.[tj]sx?$' \
+          -exec deno cache {} ${{ inputs.deno-config-path != '' && '--config=' || '' }}${{ inputs.deno-config-path }} \;

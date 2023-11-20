@@ -1,0 +1,52 @@
+name: Test the action
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+  workflow_dispatch:
+
+jobs:
+  basic:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    name: Test basic usage on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use basic action
+        uses: ./
+
+      - name: Test basic usage
+        shell: bash
+        run: deno run -A ./test/basic/main.ts
+
+  customized:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    name: Test customized usage on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test action
+        uses: ./
+        with:
+          deno-version: 1.x
+          deno-lock-path: "test/customized/deno.lock"
+          deno-json-path: "test/customized/deno.json"
+          scripts-dir: "test/customized/"
+
+      - name: Test customized usage
+        shell: bash
+        run: deno run -A --config ./test/customized/deno.json ./test/customized/main.ts
