@@ -1,6 +1,8 @@
 name: "Setup Deno with cache"
-
 description: "Composite action wrapper around denoland/setup-deno and actions/cache to setup Deno and cache its dependencies."
+branding:
+  icon: fast-forward
+  color: gray-dark
 
 inputs:
   deno-version:
@@ -13,7 +15,7 @@ inputs:
     description: "The path to the lock file to use for caching. Defaults to `./deno.lock`."
     default: "./deno.lock"
   scripts-dir:
-    description: "The path to the scripts to cache. Defaults to the repo root (`.`)."
+    description: "The path to the scripts to cache. Defaults to the repo root."
     default: "."
 
 outputs:
@@ -23,6 +25,9 @@ outputs:
   is-canary:
     description: "If the installed Deno version was a canary version."
     value: ${{ steps.setup-deno.outputs.is-canary }}
+  cache-hit:
+    description: "A boolean value to indicate an exact match was found for the key."
+    value: ${{ steps.cache-deno.outputs.cache-hit }}
 
 runs:
   using: "composite"
@@ -38,6 +43,7 @@ runs:
       run: echo "DENO_DIR=${{ runner.os == 'Windows' && 'C:\\deno_cache' || '/tmp/deno_cache' }}" >> $GITHUB_ENV
 
     - name: Cache Deno dependencies
+      id: cache-deno
       uses: actions/cache@v3
       with:
         key: ${{ hashFiles(inputs.deno-lock-path) }}
@@ -54,4 +60,4 @@ runs:
         export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
         find ${{ inputs.scripts-path }} \
           -regex '.+\.[tj]sx?$' \
-          -exec deno cache {} ${{ inputs.deno-config-path != '' && '--config=' || '' }}${{ inputs.deno-config-path }} \;
+          -exec deno cache {} ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} \;

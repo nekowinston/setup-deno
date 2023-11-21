@@ -23,7 +23,6 @@ jobs:
         uses: ./
 
       - name: Test basic usage
-        shell: bash
         run: deno run -A ./test/basic/main.ts
 
   customized:
@@ -44,9 +43,7 @@ jobs:
         with:
           deno-version: 1.x
           deno-lock-path: "test/customized/deno.lock"
-          deno-json-path: "test/customized/deno.json"
           scripts-dir: "test/customized/"
 
       - name: Test customized usage
-        shell: bash
-        run: deno run -A --config ./test/customized/deno.json ./test/customized/main.ts
+        run: deno run -A --config=./test/customized/deno.json ./test/customized/main.ts
