@@ -49,15 +49,10 @@ runs:
         key: ${{ hashFiles(inputs.deno-lock-path) }}
         path: ${{ env.DENO_DIR }}
 
-    - name: Install GNU findutils
-      if: runner.os == 'macOS'
-      shell: bash
-      run: brew install findutils
-
     - name: Restore Deno dependencies
       shell: bash
       run: |
-        export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
-        find ${{ inputs.scripts-path }} \
+        find ${{ runner.os == 'macOS' && '-E' || '' }} \
+          ${{ inputs.scripts-dir }} \
           -regex '.+\.[tj]sx?$' \
           -exec deno cache {} ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} \;
