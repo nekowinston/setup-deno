@@ -14,7 +14,7 @@ inputs:
   deno-lock-path:
     description: "The path to the lock file to use for caching. Defaults to `./deno.lock`."
     default: "./deno.lock"
-  scripts-dir:
+  directory:
     description: "The path to the scripts to cache. Defaults to the repo root."
     default: "."
 
@@ -53,6 +53,6 @@ runs:
       shell: bash
       run: |
         find ${{ runner.os == 'macOS' && '-E' || '' }} \
-          ${{ inputs.scripts-dir }} \
+          ${{ inputs.directory }} \
           -regex '.+\.[tj]sx?$' \
           -exec deno cache {} ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} \;

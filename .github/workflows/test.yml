@@ -1,4 +1,4 @@
-name: Test the action
+name: Test
 
 on:
   push: { branches: [main] }
@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
-    name: Test basic usage on ${{ matrix.os }}
+    name: Basic on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -31,7 +31,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
-    name: Test customized usage on ${{ matrix.os }}
+    name: Customized on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -43,7 +43,7 @@ jobs:
         with:
           deno-version: 1.x
           deno-lock-path: "test/customized/deno.lock"
-          scripts-dir: "test/customized/"
+          directory: "test/customized"
 
       - name: Test customized usage
         run: deno run -A --config=./test/customized/deno.json ./test/customized/main.ts

@@ -7,9 +7,29 @@
 Based on `denoland/setup-deno@v1`, & `actions/cache@v3`, handles `DENO_DIR` and caching for you.\
 Works on Ubuntu, macOS & Windows runners.
 
+### Usage
+
+#### Basic:
+
+```yaml
+- uses: nekowinston/setup-deno@v1
+```
+
+#### All options:
+
+```yaml
+- uses: nekowinston/setup-deno@v1
+  with:
+    deno-version: "~1.38"
+    deno-json-path: ./subdirectory/deno.json
+    deno-lock-path: ./subdirectory/deno.lock
+    directory: ./subdirectory
+```
+
 ### Inputs
 - `deno-version`:\
-  The Deno version to install. Can be a semver version of a stable release, `'canary'` for the latest canary, or the Git hash of a specific canary release.
+  The Deno version to install. Can be a semver version of a stable release, `'canary'` for the latest canary, or the Git hash of a specific canary release.\
+  See [`setup-deno`](https://github.com/marketplace/actions/setup-deno) for examples.\
   Defaults to `1.x`.
 - `deno-json-path`:\
   The path to the Deno config file to use for caching.\
@@ -17,7 +37,7 @@ Works on Ubuntu, macOS & Windows runners.
 - `deno-lock-path`:\
   The path to the lock file to use for caching.\
   Defaults to `./deno.lock`.
-- `scripts-dir`:\
+- `directory`:\
   The path to the scripts to cache. This can be useful if Deno is only part of your repo, and stored in a subdirectory.\
   Defaults to the repo root.
 
