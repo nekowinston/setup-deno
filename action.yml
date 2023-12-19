@@ -9,7 +9,7 @@ inputs:
     description: "The Deno version to install. Can be a semver version of a stable release, 'canary' for the latest canary, or the Git hash of a specific canary release."
     default: "1.x"
   deno-json-path:
-    description: "The path to the Deno config file to use for caching. Defaults to an empty string, using the built-in CLI default."
+    description: "The path to the Deno config file to use for caching. Defaults to an empty string, using the built-in CLI default (`deno.json` and `deno.jsonc`)."
     default: ""
   deno-lock-path:
     description: "The path to the lock file to use for caching. Defaults to `./deno.lock`."
@@ -34,17 +34,17 @@ runs:
   steps:
     - name: Setup Deno
       id: setup-deno
-      uses: denoland/setup-deno@v1
+      uses: denoland/setup-deno@v1.1.3
       with:
         deno-version: ${{ inputs.deno-version }}
       
     - name: Set Deno cache dir
       shell: bash
-      run: echo "DENO_DIR=${{ runner.os == 'Windows' && 'C:\\deno_cache' || '/tmp/deno_cache' }}" >> $GITHUB_ENV
+      run: echo "DENO_DIR=$RUNNER_TEMP${{ runner.os == 'Windows' && '\\' || '/'  }}deno_cache" >> $GITHUB_ENV
 
     - name: Cache Deno dependencies
       id: cache-deno
-      uses: actions/cache@v3
+      uses: actions/cache@v3.3.2
       with:
         key: ${{ hashFiles(inputs.deno-lock-path) }}
         path: ${{ env.DENO_DIR }}
@@ -52,7 +52,4 @@ runs:
     - name: Restore Deno dependencies
       shell: bash
       run: |
-        find ${{ runner.os == 'macOS' && '-E' || '' }} \
-          ${{ inputs.directory }} \
-          -regex '.+\.[tj]sx?$' \
-          -exec deno cache {} ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} \;
+        find ${{ inputs.directory }} -regex '.*\.[jt]sx*' -exec deno cache ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} {} \;
