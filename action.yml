@@ -42,6 +42,10 @@ runs:
       shell: bash
       run: echo "DENO_DIR=$RUNNER_TEMP${{ runner.os == 'Windows' && '\\' || '/'  }}deno_cache" >> $GITHUB_ENV
 
+    - name: Register Deno problem matchers
+      shell: bash
+      run: echo "::add-matcher::./.github/deno-matcher.json"
+
     - name: Cache Deno dependencies
       id: cache-deno
       uses: actions/cache@v3.3.2

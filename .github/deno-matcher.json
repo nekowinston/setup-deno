@@ -1,0 +1,66 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "deno",
+      "pattern": [
+        {
+          "regexp": "^(warning|error): (?:(\\S+) \\[(?:ERROR|WARN)\\]: )?(.*)$",
+          "severity": 1,
+          "code": 2,
+          "message": 3
+        },
+        {
+          "regexp": "^\\s{4}at\\s.*((?:file|http|https|data|blob):[^:]+):(\\d+):(\\d+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "owner": "deno-test",
+      "pattern": [
+        {
+          "regexp": "^.+ => ([\\\\/\\w-_\\.]+):(\\d):(\\d)$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        },
+        {
+          "regexp": "^(error|warning): (.*)$",
+          "severity": 1,
+          "message": 2
+        }
+      ]
+    },
+    {
+      "owner": "deno-lint",
+      "pattern": [
+        {
+          "regexp": "^\\(([^)]*)\\)\\s(.*)$",
+          "code": 1,
+          "message": 2
+        },
+        {
+          "regexp": "^\\s{4}at\\s([^:]+):(\\d+):(\\d+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "owner": "deno-lint-compact",
+      "pattern": [
+        {
+          "regexp": "^((\\w:)?[\\\\/\\w-_\\.]+): line (\\d+), col (\\d+) - (.+) (\\(.+\\))",
+          "file": 1,
+          "line": 3,
+          "column": 4,
+          "message": 5,
+          "code": 6
+        }
+      ]
+    }
+  ]
+}
