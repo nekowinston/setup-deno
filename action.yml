@@ -40,7 +40,7 @@ runs:
       
     - name: Set Deno cache dir
       shell: bash
-      run: echo "DENO_DIR=${{ runner.os == 'Windows' && 'C:\\deno_cache' || '/tmp/deno_cache' }}" >> $GITHUB_ENV
+      run: echo "DENO_DIR=$RUNNER_TEMP${{ runner.os == 'Windows' && '\\' || '/'  }}deno_cache" >> $GITHUB_ENV
 
     - name: Cache Deno dependencies
       id: cache-deno
