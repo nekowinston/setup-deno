@@ -67,6 +67,8 @@ jobs:
       - name: Setup Deno
         uses: ./
 
+      - run: deno test || true
+
       - name: Problem matcher
         working-directory: test/problem-matcher
         run: |
