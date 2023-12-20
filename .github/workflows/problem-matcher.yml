@@ -1,0 +1,33 @@
+name: Problem Matcher
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+  workflow_dispatch:
+
+jobs:
+  problem-matcher:
+    strategy:
+      fail-fast: false
+      matrix:
+        # we just need to check two different path separators
+        os: [ubuntu-latest, windows-latest]
+
+    name: Problem matcher on ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: ./
+
+      - name: Problem matcher
+        working-directory: test/problem-matcher
+        run: |
+          deno lint || true
+          deno lint --compact || true
+          deno test || true
+          deno check *.ts || true
