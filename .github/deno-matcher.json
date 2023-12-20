@@ -1,23 +1,6 @@
 {
   "problemMatcher": [
     {
-      "owner": "deno",
-      "pattern": [
-        {
-          "regexp": "^(warning|error): (?:(\\S+) \\[(?:ERROR|WARN)\\]: )?(.*)$",
-          "severity": 1,
-          "code": 2,
-          "message": 3
-        },
-        {
-          "regexp": "^\\s{4}at\\s.*((?:file|http|https|data|blob):[^:]+):(\\d+):(\\d+)$",
-          "file": 1,
-          "line": 2,
-          "column": 3
-        }
-      ]
-    },
-    {
       "owner": "deno-test",
       "pattern": [
         {
@@ -29,23 +12,8 @@
         {
           "regexp": "^(error|warning): (.*)$",
           "severity": 1,
-          "message": 2
-        }
-      ]
-    },
-    {
-      "owner": "deno-lint",
-      "pattern": [
-        {
-          "regexp": "^\\(([^)]*)\\)\\s(.*)$",
-          "code": 1,
-          "message": 2
-        },
-        {
-          "regexp": "^\\s{4}at\\s([^:]+):(\\d+):(\\d+)$",
-          "file": 1,
-          "line": 2,
-          "column": 3
+          "message": 2,
+          "loop": true
         }
       ]
     },
