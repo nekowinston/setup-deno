@@ -2,7 +2,7 @@
   "problemMatcher": [
     {
       "owner": "deno-test",
-      "fileLocation": "relative",
+      "fileLocation": ["relative", "${cwd}"],
       "pattern": [
         {
           "regexp": "^.+ => ([\\\\/\\w-_\\.]+):(\\d):(\\d)$",
