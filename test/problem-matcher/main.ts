@@ -1,3 +1,4 @@
+// intentionally broken snytax and formatting to check the problem matcher
 import * as
  color from "https://deno.land/std@0.207.0/fmt/colors.ts";
 
@@ -11,5 +12,3 @@ let x
  = 42;
 
 let y: any = {};
-
-// intentionally broken sytax to check the problem matcher
