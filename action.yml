@@ -44,7 +44,7 @@ runs:
 
     - name: Register Deno problem matchers
       shell: bash
-      run: echo "::add-matcher::.github/deno-matcher.json"
+      run: echo "::add-matcher::${{ github.action_path }}/.github/deno-matcher.json"
 
     - name: Cache Deno dependencies
       id: cache-deno
