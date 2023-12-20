@@ -1,0 +1,17 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "deno-lint-compact",
+      "pattern": [
+        {
+          "regexp": "^((\\w:)?[\\\\/\\w-_\\.]+): line (\\d+), col (\\d+) - (.+) (\\(.+\\))",
+          "file": 1,
+          "line": 3,
+          "column": 4,
+          "message": 5,
+          "code": 6
+        }
+      ]
+    }
+  ]
+}
