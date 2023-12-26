@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --no-lock --allow-read --allow-run=deno
+#!/usr/bin/env -S deno run --no-lock --allow-read --allow-run=deno --allow-env=CI,DENO_DIR
 import { parseArgs } from "https://deno.land/std@0.210.0/cli/parse_args.ts";
 import { encodeHex } from "https://deno.land/std@0.210.0/encoding/hex.ts";
 import { exists, walk } from "https://deno.land/std@0.210.0/fs/mod.ts";
@@ -7,36 +7,41 @@ import * as log from "https://deno.land/std@0.210.0/log/mod.ts";
 import { relative } from "https://deno.land/std@0.210.0/path/relative.ts";
 import ignore from "https://esm.sh/gh/nekowinston/deno-ignore@v5.3.0/index.js?pin=v135";
 
-const args = parseArgs(Deno.args, {
-  boolean: ["help", "dry-run", "debug"],
-  string: ["config"],
-  alias: { help: "h", dryRun: "n" },
-  "--": true,
-});
-
-const logLevel = args.debug ? "DEBUG" : "INFO";
-log.setup({
-  handlers: {
-    console: new log.handlers.ConsoleHandler(logLevel, {
-      formatter: (logRecord) =>
-        Deno.noColor
-          ? [logRecord.levelName, logRecord.msg].join(" ")
-          : logRecord.msg,
-    }),
-  },
-  loggers: { default: { handlers: ["console"], "level": logLevel } },
-});
-
-type Args = typeof args;
 type DenoConfig = {
   cache: { include?: string[]; exclude?: string[] };
   exclude?: string[];
   [key: string]: unknown;
 };
 
-const main = async (args: Args) => {
+if (import.meta.main) {
+  const args = parseArgs(Deno.args, {
+    boolean: ["help", "dry-run", "verbose", "lock-write"],
+    negatable: ["lock-write"],
+    string: ["config"],
+    default: { "lock-write": true },
+    alias: { help: "h", "dry-run": "n" },
+    "--": true,
+  });
+  const denoDir = Deno.env.get("DENO_DIR");
+
+  const logLevel = Deno.env.get("CI") === "1"
+    ? "DEBUG"
+    : (args.verbose ? "DEBUG" : "INFO");
+  log.setup({
+    handlers: {
+      console: new log.handlers.ConsoleHandler(logLevel, {
+        formatter: (logRecord) =>
+          Deno.noColor
+            ? [logRecord.levelName, logRecord.msg].join(" ")
+            : logRecord.msg,
+      }),
+    },
+    loggers: { default: { handlers: ["console"], "level": logLevel } },
+  });
   if (args.help) {
-    console.log("Usage: cache [-n | --dry-run] [--debug] [--] [DENO_ARGS...]");
+    console.log(
+      "Usage: cache [-n | --dry-run] [-v | --verbose] [--] [DENO_ARGS...]",
+    );
     Deno.exit(0);
   }
 
@@ -75,35 +80,36 @@ const main = async (args: Args) => {
     includeDirs: false,
   });
 
+  const paths = [];
+
   for await (const entry of walkIterator) {
     const relativePath = relative(".", entry.path);
 
+    // assuming that DENO_DIR is set inside the current directory,
+    // this would first fetch the deps of this script, store them there,
+    // then include them here. since the cache could be huge, don't log it.
+    if (denoDir && entry.path.startsWith(denoDir)) continue;
     if (ig.ignores(relativePath)) {
       log.debug(`ignored ${relativePath}`);
       continue;
     }
 
     log.debug(`caching ${relativePath}`);
-    const cmd = new Deno.Command(Deno.execPath(), {
-      args: [
-        "cache",
-        args.config && `--config=${args.config}`,
-        relativePath,
-        ...args["--"],
-      ].filter(Boolean) as string[],
-      stdout: "inherit",
-      stderr: "inherit",
-    });
-
-    let code = 0;
-    if (!args["dry-run"]) code = (await cmd.output()).code;
-
-    if (code === 0) {
-      log.info(`cached ${relativePath}`);
-    } else {
-      log.error(`failed to cache ${entry.path}`);
-    }
+    paths.push(relativePath);
   }
-};
 
-if (import.meta.main) main(args);
+  const cmd = new Deno.Command(Deno.execPath(), {
+    args: [
+      "cache",
+      args["lock-write"] && "--lock-write",
+      args.config && `--config=${args.config}`,
+      ...args["--"], // everything after `--` is passed to Deno
+      ...paths,
+    ].filter(Boolean) as string[],
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+
+  const code = !args["dry-run"] ? (await cmd.output()).code : 0;
+  if (code === 0) log.debug(`finished caching ${paths.length} files`);
+}
