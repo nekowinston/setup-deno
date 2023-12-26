@@ -67,12 +67,11 @@ if (import.meta.main) {
 
   // flattening so that a single string doesn't break too much
   const patterns = [
-    ...[denoCfg?.exclude ?? []].flat(),
-    ...[denoCfg?.cache?.exclude ?? []].flat(),
-    ...[denoCfg?.cache?.include ?? []].flatMap((p) => `!${p}`),
-  ];
-  log.debug(`patterns:`, patterns);
-  patterns.forEach((p) => log.debug(`- ${p}`));
+    ...[denoCfg?.exclude].filter(Boolean).flat(),
+    ...[denoCfg?.cache?.exclude].filter(Boolean).flat(),
+    ...[denoCfg?.cache?.include].filter(Boolean).flatMap((p) => `!${p}`),
+  ] as string[];
+  patterns.length > 0 && log.debug(`patterns:\n| ${patterns.join("\n| ")}`);
   const ig = ignore().add(patterns);
 
   const walkIterator = walk(".", {

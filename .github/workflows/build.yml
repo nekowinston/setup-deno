@@ -20,7 +20,11 @@ jobs:
       - name: Setup Deno
         uses: ./
 
-      - run: deno run -A ./bundle.ts
+      - name: Lint
+        run: deno lint
+
+      - name: Bundle
+        run: deno run -A ./bundle.ts
 
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@v5

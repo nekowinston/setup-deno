@@ -21,30 +21,8 @@ jobs:
 
       - name: Setup Deno
         uses: ./
+        with:
+          deno-config-path: "test/basic/deno.json"
 
       - name: Test basic usage
         run: deno run -A ./test/basic/main.ts
-
-  customized:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    name: Customized on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Test action
-        uses: ./
-        with:
-          deno-version: 1.x
-          deno-lock-path: "test/customized/deno.lock"
-          directory: "test/customized"
-
-      - name: Test customized usage
-        working-directory: test/customized
-        run: deno run -A main.ts

@@ -6,8 +6,5 @@
     "std/": "https://deno.land/std@0.207.0/",
     "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/"
   },
-  "exclude": ["dist", "test/problem-matcher/*"],
-  "cache": {
-    "include": ["test/problem-matcher/*"]
-  }
+  "exclude": ["dist", "test"]
 }
