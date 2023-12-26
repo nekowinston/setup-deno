@@ -1,7 +1,13 @@
 {
+  "tasks": {
+    "cache": "deno run --allow-read --allow-run=deno ./cache.ts"
+  },
   "imports": {
     "std/": "https://deno.land/std@0.207.0/",
     "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/"
   },
-  "exclude": ["test/problem-matcher"]
+  "exclude": ["dist", "test/problem-matcher/*"],
+  "cache": {
+    "include": ["test/problem-matcher/*"]
+  }
 }
