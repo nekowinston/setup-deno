@@ -56,4 +56,4 @@ runs:
     - name: Restore Deno dependencies
       shell: bash
       run: |
-        ${{ github.action_path }}/dist/cache.js
+        "${{ github.action_path }}"/dist/cache.js
