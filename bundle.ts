@@ -8,4 +8,6 @@ const bundled = await bundle(
 );
 
 ensureDir("./dist");
-await Deno.writeTextFile("./dist/cache.js", bundled.code);
+await Deno.writeTextFile("./dist/cache.js", bundled.code, {
+  mode: 0o744,
+});
