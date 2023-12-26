@@ -24,7 +24,7 @@ if (import.meta.main) {
   });
   const denoDir = Deno.env.get("DENO_DIR");
 
-  const logLevel = Deno.env.get("CI") === "1"
+  const logLevel = ["1", "true"].includes(Deno.env.get("CI") ?? "")
     ? "DEBUG"
     : (args.verbose ? "DEBUG" : "INFO");
   log.setup({
