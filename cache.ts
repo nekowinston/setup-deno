@@ -6,7 +6,6 @@ import * as JSONC from "https://deno.land/std@0.210.0/jsonc/parse.ts";
 import * as log from "https://deno.land/std@0.210.0/log/mod.ts";
 import { relative } from "https://deno.land/std@0.210.0/path/relative.ts";
 import ignore from "https://esm.sh/gh/nekowinston/deno-ignore@v5.3.0/index.js?pin=v135";
-
 type DenoConfig = {
   cache: { include?: string[]; exclude?: string[] };
   exclude?: string[];
@@ -15,12 +14,19 @@ type DenoConfig = {
 
 if (import.meta.main) {
   const args = parseArgs(Deno.args, {
-    boolean: ["help", "dry-run", "verbose", "lock-write"],
+    boolean: ["dry-run", "verbose", "lock-write"],
     negatable: ["lock-write"],
     string: ["config"],
     default: { "lock-write": true },
-    alias: { help: "h", "dry-run": "n" },
+    alias: { "dry-run": "n", verbose: "v" },
     "--": true,
+    unknown: (arg) => {
+      console.log(`Unknown argument: ${arg}`);
+      console.log(
+        "Usage: cache [-n | --dry-run] [-v | --verbose] [--] [DENO_ARGS...]",
+      );
+      Deno.exit(0);
+    },
   });
   const denoDir = Deno.env.get("DENO_DIR");
 
@@ -32,18 +38,12 @@ if (import.meta.main) {
       console: new log.handlers.ConsoleHandler(logLevel, {
         formatter: (logRecord) =>
           Deno.noColor
-            ? [logRecord.levelName, logRecord.msg].join(" ")
+            ? logRecord.levelName + " " + logRecord.msg
             : logRecord.msg,
       }),
     },
     loggers: { default: { handlers: ["console"], "level": logLevel } },
   });
-  if (args.help) {
-    console.log(
-      "Usage: cache [-n | --dry-run] [-v | --verbose] [--] [DENO_ARGS...]",
-    );
-    Deno.exit(0);
-  }
 
   if (args["dry-run"]) log.warning("dry-run mode enabled");
   if (args.config && !await exists(args.config)) {
@@ -98,18 +98,27 @@ if (import.meta.main) {
     paths.push(relativePath);
   }
 
-  const cmd = new Deno.Command(Deno.execPath(), {
-    args: [
-      "cache",
-      args["lock-write"] && "--lock-write",
-      args.config && `--config=${args.config}`,
-      ...args["--"], // everything after `--` is passed to Deno
-      ...paths,
-    ].filter(Boolean) as string[],
-    stdout: "inherit",
-    stderr: "inherit",
-  });
+  const denoArgs = [
+    "cache",
+    args["lock-write"] && "--lock-write",
+    args.config && `--config=${args.config}`,
+    ...args["--"], // everything after `--` is passed to Deno
+    ...paths,
+  ].filter(Boolean) as string[];
+  const cmd = new Deno.Command(Deno.execPath(), { args: denoArgs });
+  const cmdString = Deno.execPath() + " " + denoArgs.join(" ");
 
-  const code = !args["dry-run"] ? (await cmd.output()).code : 0;
+  if (args["dry-run"]) {
+    log.info(`would run: ${cmdString}`);
+    Deno.exit(0);
+  }
+  log.debug(`running: ${cmdString}`);
+  const { stderr, code } = await cmd.output();
+
+  // deno cache outputs to stderr
+  for (const line of new TextDecoder().decode(stderr).split("\n")) {
+    if (line.length > 0) log.info("deno> " + line);
+  }
+
   if (code === 0) log.debug(`finished caching ${paths.length} files`);
 }
