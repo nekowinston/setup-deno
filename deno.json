@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "cache": "deno run --allow-read --allow-run=deno ./cache.ts"
+    "cache": "deno run --no-lock --allow-read --allow-run=deno --allow-env=CI,DENO_DIR ./cache.ts"
   },
   "imports": {
     "std/": "https://deno.land/std@0.207.0/",
