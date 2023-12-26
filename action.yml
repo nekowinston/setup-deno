@@ -56,4 +56,4 @@ runs:
     - name: Restore Deno dependencies
       shell: bash
       run: |
-        find ${{ inputs.directory }} -regex '.*\.[jt]sx*' -exec deno cache ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} {} \;
+        ${{ github.action_path }}/dist/cache.js
