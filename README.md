@@ -6,7 +6,7 @@
 
 - Based on: 
   - [`denoland/setup-deno@v1`](https://github.com/denoland/setup-deno),
-  - [`actions/cache@v3`](https://github.com/actions/cache)
+  - [`actions/cache@v4`](https://github.com/actions/cache)
 - Handles restoring and caching to `DENO_DIR` for you.
 - Annotates your source code from `deno lint --compact` output.\
   See the summary of the most recent [Problem Matcher worflow](https://github.com/nekowinston/setup-deno/actions/workflows/problem-matcher.yml) for an example.
