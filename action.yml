@@ -48,7 +48,7 @@ runs:
 
     - name: Cache Deno dependencies
       id: cache-deno
-      uses: actions/cache@v4.0.1
+      uses: actions/cache@v4.0.2
       with:
         key: ${{ hashFiles(inputs.deno-lock-path) }}
         path: ${{ env.DENO_DIR }}
