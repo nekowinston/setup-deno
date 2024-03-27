@@ -11,12 +11,6 @@ inputs:
   deno-json-path:
     description: "The path to the Deno config file to use for caching. Defaults to an empty string, using the built-in CLI default (`deno.json` and `deno.jsonc`)."
     default: ""
-  deno-lock-path:
-    description: "The path to the lock file to use for caching. Defaults to `./deno.lock`."
-    default: "./deno.lock"
-  directory:
-    description: "The path to the scripts to cache. Defaults to the repo root."
-    default: "."
 
 outputs:
   deno-version:
@@ -56,4 +50,4 @@ runs:
     - name: Restore Deno dependencies
       shell: bash
       run: |
-        find ${{ inputs.directory }} -regex '.*\.[jt]sx*' -exec deno cache ${{ inputs.deno-json-path != '' && '--config=' || '' }}${{ inputs.deno-json-path }} {} \;
+        "${{ github.action_path }}/dist/cache.js" --config "${{ inputs.deno-json-path }}"

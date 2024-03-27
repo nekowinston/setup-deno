@@ -1,14 +1,11 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S deno run
 // just get any stdlib for the cache test
-import { red, yellow, green, cyan, magenta } from "std/fmt/colors.ts";
+import { cyan, green, magenta, red, yellow } from "std/fmt/colors.ts";
 
-const helloWorld = [
-  red("He"),
-  yellow("llo"),
-  " ",
-  green("Wo"),
-  cyan("rl"),
-  magenta("d!"),
-].join("");
+const rainbowify = (str: string) =>
+  str
+    .split("")
+    .map((char, index) => [red, yellow, green, cyan, magenta][index % 5](char))
+    .join("");
 
-console.log(helloWorld);
+console.log(rainbowify("Hello World!"));
