@@ -1,10 +1,10 @@
 // just another script to test caching of multiple scripts:
 /**
- * taken from
- * https://deno.land/x/cliffy@v1.0.0-rc.3/examples/command.ts
+ * mostly taken from
+ * https://deno.land/x/cliffy@v1.0.0-rc.7/examples/command.ts
  */
 
-import { Command } from "cliffy/command/mod.ts";
+import { Command } from "@cliffy/command";
 
 await new Command()
   .name("reverse-proxy")

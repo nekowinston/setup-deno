@@ -41,7 +41,6 @@ jobs:
       - name: Test action
         uses: ./
         with:
-          deno-version: 1.x
           deno-lock-path: "test/customized/deno.lock"
           directory: "test/customized"
 

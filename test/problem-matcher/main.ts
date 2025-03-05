@@ -1,6 +1,6 @@
 // intentionally broken snytax and formatting to check the problem matcher
 import * as
- color from "https://deno.land/std@0.207.0/fmt/colors.ts";
+ color from "@std/fmt/colors";
 
 console.log(green("Hello world!"));
 

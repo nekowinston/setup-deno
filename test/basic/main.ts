@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 // just get any stdlib for the cache test
-import { red, yellow, green, cyan, magenta } from "std/fmt/colors.ts";
+import { red, yellow, green, cyan, magenta } from "@std/fmt/colors";
 
 const helloWorld = [
   red("He"),
