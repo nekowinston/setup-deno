@@ -1,5 +1,6 @@
 {
   "imports": {
+    "@std/fmt": "jsr:@std/fmt@^1.0.6",
     "std/": "https://deno.land/std@0.207.0/",
     "cliffy/": "https://deno.land/x/cliffy@v1.0.0-rc.3/"
   },
