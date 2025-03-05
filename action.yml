@@ -7,7 +7,7 @@ branding:
 inputs:
   deno-version:
     description: "The Deno version to install. Can be a semver version of a stable release, 'canary' for the latest canary, or the Git hash of a specific canary release."
-    default: "1.x"
+    default: "2.x"
   deno-json-path:
     description: "The path to the Deno config file to use for caching. Defaults to an empty string, using the built-in CLI default (`deno.json` and `deno.jsonc`)."
     default: ""
@@ -34,7 +34,7 @@ runs:
   steps:
     - name: Setup Deno
       id: setup-deno
-      uses: denoland/setup-deno@v1.1.4
+      uses: denoland/setup-deno@v2.0.2
       with:
         deno-version: ${{ inputs.deno-version }}
       
